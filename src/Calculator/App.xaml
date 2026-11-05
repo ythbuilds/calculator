@@ -1,3 +1,4 @@
+
 <Application x:Class="CalculatorApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -44,6 +45,15 @@
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
+                    <!-- Halloween palette: pumpkin orange over a midnight-purple surface. -->
+                    <Color x:Key="SystemAccentColor">#FFFF7A1A</Color>
+                    <Color x:Key="SystemAccentColorDark1">#FFE8660B</Color>
+                    <Color x:Key="SystemAccentColorDark2">#FFC84E00</Color>
+                    <Color x:Key="SystemAccentColorDark3">#FF9E3B00</Color>
+                    <Color x:Key="SystemAccentColorLight1">#FFFF9A4D</Color>
+                    <Color x:Key="SystemAccentColorLight2">#FFFFB879</Color>
+                    <Color x:Key="SystemAccentColorLight3">#FFFFD2A8</Color>
+                    <Color x:Key="HalloweenSurfaceColor">#FF21172B</Color>
                     <Thickness x:Key="ControlBorderThemeThickness">0</Thickness>
                     <Thickness x:Key="HighContrastThicknessTop">0,0,0,0</Thickness>
                     <x:Double x:Key="HighContrastStrokeThickness">0</x:Double>
@@ -54,10 +64,10 @@
                     <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumLowBrush" Color="{StaticResource ChromeMediumLowColor}"/>
                     <SolidColorBrush x:Key="SystemControlBackgroundTransparentBrush" Color="Transparent"/>
                     <SolidColorBrush x:Key="SystemControlHighlightTransparentBrush" Color="Transparent"/>
-                    <SolidColorBrush x:Key="AppBackgroundAltMediumLowBrush" Color="{ThemeResource SystemAltMediumLowColor}"/>
+                    <SolidColorBrush x:Key="AppBackgroundAltMediumLowBrush" Color="{StaticResource HalloweenSurfaceColor}"/>
                     <SolidColorBrush x:Key="AppOperatorPanelBackground"
-                                     Opacity="0.4"
-                                     Color="{ThemeResource SystemAltMediumLowColor}"/>
+                                     Opacity="0.72"
+                                     Color="#FF382443"/>
                     <SolidColorBrush x:Key="AppControlPageTextBaseMediumHighBrush" Color="{StaticResource SystemBaseMediumHighColor}"/>
                     <RevealBackgroundBrush x:Key="AppControlHoverButtonFaceBrush"
                                            FallbackColor="#18FFFFFF"
@@ -157,6 +167,15 @@
                     <StaticResource x:Key="AppControlBackgroundSecondaryBrush" ResourceKey="SubtleFillColorSecondaryBrush"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
+                    <!-- Keep the seasonal accent visible when Windows is in light mode. -->
+                    <Color x:Key="SystemAccentColor">#FFB84D00</Color>
+                    <Color x:Key="SystemAccentColorDark1">#FF963F00</Color>
+                    <Color x:Key="SystemAccentColorDark2">#FF753100</Color>
+                    <Color x:Key="SystemAccentColorDark3">#FF542300</Color>
+                    <Color x:Key="SystemAccentColorLight1">#FFD86616</Color>
+                    <Color x:Key="SystemAccentColorLight2">#FFF28A38</Color>
+                    <Color x:Key="SystemAccentColorLight3">#FFFFB879</Color>
+                    <Color x:Key="HalloweenSurfaceColor">#FFFFF5E8</Color>
                     <Thickness x:Key="ControlBorderThemeThickness">0</Thickness>
                     <Thickness x:Key="HighContrastThicknessTop">0,0,0,0</Thickness>
                     <x:Double x:Key="HighContrastStrokeThickness">0</x:Double>
@@ -167,10 +186,10 @@
                     <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumLowBrush" Color="{StaticResource ChromeMediumLowColor}"/>
                     <SolidColorBrush x:Key="SystemControlBackgroundTransparentBrush" Color="Transparent"/>
                     <SolidColorBrush x:Key="SystemControlHighlightTransparentBrush" Color="Transparent"/>
-                    <SolidColorBrush x:Key="AppBackgroundAltMediumLowBrush" Color="{ThemeResource SystemAltMediumLowColor}"/>
+                    <SolidColorBrush x:Key="AppBackgroundAltMediumLowBrush" Color="{StaticResource HalloweenSurfaceColor}"/>
                     <SolidColorBrush x:Key="AppOperatorPanelBackground"
-                                     Opacity="0.4"
-                                     Color="{ThemeResource SystemAltMediumLowColor}"/>
+                                     Opacity="0.72"
+                                     Color="#FFFFE7CC"/>
                     <SolidColorBrush x:Key="AppControlPageTextBaseMediumHighBrush" Color="{StaticResource SystemBaseMediumHighColor}"/>
                     <RevealBackgroundBrush x:Key="AppControlHoverButtonFaceBrush"
                                            FallbackColor="#17000000"

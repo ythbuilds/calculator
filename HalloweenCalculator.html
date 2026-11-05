@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17101f">
+  <title>Midnight Calculator</title>
+  <style>
+    :root { color-scheme: dark; --night:#17101f; --panel:#21172b; --tile:#30243b; --tile-hover:#40304e; --orange:#ff8126; --orange-hot:#ff9a45; --ink:#fff8ef; --muted:#ad9eb8; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:26px; color:var(--ink); font:15px/1.4 "Segoe UI",system-ui,sans-serif; background:radial-gradient(ellipse at 50% 15%,#352040 0,transparent 40%),radial-gradient(ellipse at 12% 90%,#2d1933 0,transparent 36%),#100c16; }
+    .app { position:relative; width:min(100%,390px); padding:23px; overflow:hidden; border:1px solid #594062; border-radius:28px; background:linear-gradient(155deg,#261b31f2,#18121ff7 64%); box-shadow:0 28px 90px #0009,0 0 50px #ff81261a,inset 0 1px #ffffff12; }
+    .app:before,.app:after { position:absolute; pointer-events:none; color:#ff9a4513; font-size:150px; line-height:1; }
+    .app:before { content:"☾"; right:4px; top:36px; transform:rotate(-15deg) }
+    .app:after { content:"✦"; top:125px; right:24px; font-size:23px; color:#ffcf792a }
+    header,.display,.keypad,.history { position:relative; z-index:1 }
+    header { display:flex; align-items:center; gap:12px; margin-bottom:21px }
+    .mark { width:43px;height:43px;display:grid;place-items:center;border-radius:15px;background:#ff81261b;border:1px solid #ff81264a;font-size:23px;box-shadow:0 0 24px #ff812621 }
+    .brand { flex:1 }
+    .brand strong { display:block; font-size:15px; letter-spacing:.03em }
+    .brand span { display:block;margin-top:2px;color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase }
+    .mode { padding:7px 10px;border:1px solid #6d4c72;border-radius:999px;color:#f2c6a1;background:#382540;font-size:10px;letter-spacing:.1em;text-transform:uppercase }
+    .display { min-height:151px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;padding:17px 7px 20px;margin-bottom:14px;border-bottom:1px solid #ffffff12;overflow:hidden }
+    .expression { width:100%;min-height:22px;text-align:right;color:#baa9c5;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis }
+    .result { max-width:100%;margin-top:7px;font-size:clamp(42px,12vw,58px);font-weight:300;line-height:1.1;letter-spacing:-.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis }
+    .hint { align-self:flex-start;margin-top:10px;color:#806c8a;font-size:10px;letter-spacing:.12em;text-transform:uppercase }
+    .keypad { display:grid;grid-template-columns:repeat(4,1fr);gap:10px }
+    button { min-width:0;height:62px;border:1px solid #ffffff08;border-radius:17px;color:var(--ink);background:linear-gradient(145deg,#372b43,#2a2035);font:500 21px/1 "Segoe UI",system-ui,sans-serif;cursor:pointer;box-shadow:0 5px 12px #08050d70,inset 0 1px #ffffff0a;transition:transform .12s,background .12s,box-shadow .12s }
+    button:hover { transform:translateY(-2px);background:linear-gradient(145deg,#483553,#35273f);box-shadow:0 8px 18px #08050d88,inset 0 1px #ffffff12 }
+    button:active { transform:translateY(1px) scale(.98) }
+    button:focus-visible { outline:2px solid #ffc17d;outline-offset:2px }
+    button.utility { color:#ffc37e;background:linear-gradient(145deg,#3d2a42,#302238);font-size:17px }
+    button.operator { color:#ffad69;background:#34263d;font-size:22px }
+    button.equals { color:#241327;background:linear-gradient(145deg,#ffad5d,#ff7622);border-color:#ffbf7c55;font-weight:700;font-size:25px;box-shadow:0 7px 22px #ff812640,inset 0 1px #fff7d4 }
+    button.equals:hover { background:linear-gradient(145deg,#ffc17a,#ff8a37) }
+    button.zero { grid-column:span 2 }
+    .history { display:flex;justify-content:space-between;align-items:center;margin-top:16px;color:#806f8a;font-size:11px }
+    .history span:last-child { color:#b49ab9 }
+    @media(max-height:760px) { body{padding:12px}.app{padding:17px}.display{min-height:115px;margin-bottom:10px}.keypad{gap:8px}button{height:53px;border-radius:15px}header{margin-bottom:13px} }
+    @media(prefers-reduced-motion:reduce) { *,*:before,*:after{transition:none!important} }
+  </style>
+</head>
+<body>
+  <main class="app" aria-label="Halloween calculator">
+    <header>
+      <div class="mark" aria-hidden="true">🎃</div>
+      <div class="brand"><strong>Midnight Calculator</strong><span>Good evening, ghoul</span></div>
+      <div class="mode">☾ Spooky mode</div>
+    </header>
+    <section class="display" aria-live="polite" aria-atomic="true">
+      <div class="expression" id="expression">Ready when you are</div>
+      <div class="result" id="result">0</div>
+      <div class="hint">A little math magic</div>
+    </section>
+    <section class="keypad" aria-label="Calculator keys">
+      <button class="utility" data-action="clear" aria-label="Clear">AC</button>
+      <button class="utility" data-action="sign" aria-label="Change sign">+/−</button>
+      <button class="utility" data-action="percent" aria-label="Percent">%</button>
+      <button class="operator" data-op="÷" aria-label="Divide">÷</button>
+      <button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button><button class="operator" data-op="×" aria-label="Multiply">×</button>
+      <button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button><button class="operator" data-op="−" aria-label="Subtract">−</button>
+      <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button><button class="operator" data-op="+" aria-label="Add">+</button>
+      <button class="zero" data-digit="0">0</button><button data-action="decimal" aria-label="Decimal point">.</button><button class="equals" data-action="equals" aria-label="Equals">=</button>
+    </section>
+    <footer class="history"><span>⌨ Keyboard ready</span><span id="status">No curses, just calculations ✦</span></footer>
+  </main>
+  <script>
+    (() => {
+      const result = document.querySelector('#result');
+      const expression = document.querySelector('#expression');
+      const status = document.querySelector('#status');
+      let display = '0', stored = null, operator = null, waiting = false, repeatOperator = null, repeatValue = null, finished = false;
+      const symbols = {'+':'+','−':'−','×':'×','÷':'÷'};
+      const show = () => { result.textContent = display; result.title = display; };
+      const format = n => { if (!Number.isFinite(n)) throw Error('Cannot divide by zero'); return String(Number.parseFloat(n.toPrecision(12))); };
+      const calculate = (a, op, b) => {
+        if (op === '+') return a + b;
+        if (op === '−') return a - b;
+        if (op === '×') return a * b;
+        if (op === '÷') { if (b === 0) throw Error('Cannot divide by zero'); return a / b; }
+        return b;
+      };
+      function digit(d) {
+        if (finished) { display='0'; expression.textContent='Ready when you are'; finished=false; }
+        if (waiting) { display=d; waiting=false; } else if (display==='0') display=d; else if(display.length<16) display+=d;
+        show();
+      }
+      function choose(op) {
+        const value=Number(display);
+        if(operator && !waiting) {
+          try { display=format(calculate(stored,operator,value)); stored=Number(display); show(); }
+          catch(e) { error(e.message); return; }
+        } else stored=value;
+        operator=op; waiting=true; finished=false; repeatOperator=null; repeatValue=null;
+        expression.textContent=`${format(stored)} ${symbols[op]}`;
+      }
+      function equals() {
+        if(operator===null) {
+          if(repeatOperator!==null) { try { display=format(calculate(Number(display),repeatOperator,repeatValue)); show(); } catch(e){error(e.message);return;} }
+          return;
+        }
+        const left=stored, right=Number(display), op=operator;
+        try { display=format(calculate(left,op,right)); expression.textContent=`${format(left)} ${symbols[op]} ${format(right)} =`; repeatOperator=op; repeatValue=right; operator=null; stored=null; waiting=true; finished=true; show(); status.textContent='Spell successfully cast ✦'; }
+        catch(e) { error(e.message); }
+      }
+      function error(message) { display='Error'; show(); expression.textContent=message; operator=null;stored=null;waiting=true;finished=true;status.textContent='Try another spell'; }
+      function clear() { display='0';stored=null;operator=null;waiting=false;repeatOperator=null;repeatValue=null;finished=false;expression.textContent='Ready when you are';status.textContent='No curses, just calculations ✦';show(); }
+      function act(action) {
+        if(action==='clear') clear();
+        if(action==='decimal') { if(finished){clear();} if(waiting){display='0';waiting=false;} if(!display.includes('.')) display+='.'; show(); }
+        if(action==='sign' && display!=='0' && display!=='Error') { display=display.startsWith('-')?display.slice(1):'-'+display;show(); }
+        if(action==='percent' && display!=='Error') { display=format(Number(display)/100);show(); }
+        if(action==='equals') equals();
+      }
+      document.querySelector('.keypad').addEventListener('click',e=>{
+        const b=e.target.closest('button');if(!b)return;
+        if(b.dataset.digit!==undefined) digit(b.dataset.digit);
+        else if(b.dataset.op) choose(b.dataset.op);
+        else if(b.dataset.action) act(b.dataset.action);
+      });
+      document.addEventListener('keydown',e=>{
+        if(e.ctrlKey||e.metaKey||e.altKey)return;
+        if(/^[0-9]$/.test(e.key)){digit(e.key);return;}
+        if(e.key==='.'||e.key===','){act('decimal');return;}
+        if(e.key==='+'||e.key==='-'){choose(e.key==='+'?'+':'−');return;}
+        if(e.key==='*'||e.key==='x'||e.key==='X'){choose('×');return;}
+        if(e.key==='/'){e.preventDefault();choose('÷');return;}
+        if(e.key==='Enter'||e.key==='='){e.preventDefault();equals();return;}
+        if(e.key==='Escape'){clear();return;}
+        if(e.key==='Backspace') { if(!waiting&&!finished){display=display.length>1?display.slice(0,-1):'0';show();} }
+        if(e.key==='%')act('percent');
+      });
+      show();
+    })();
+  </script>
+</body>
+</html>
